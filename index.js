@@ -54,6 +54,11 @@ app.use(
 )
 
 app.use(
+  '/api/recaptcha/sitekey',  (req, res) => {
+  res.status(200).send({'key': process.env.RECAPTCHA_SITEKEY})
+  })
+
+app.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {maxAge: 3600 * 1000, httpOnly: false},
