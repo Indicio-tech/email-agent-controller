@@ -1,8 +1,8 @@
 const {Sequelize} = require('sequelize')
 
 connect = function () {
-  const sequelize = new Sequelize('development', 'development', 'development', {
-    host: 'lab-db',
+  const sequelize = new Sequelize('email', 'email', 'email', {
+    host: 'email-db',
     dialect: 'postgres',
     logging: false, //console.log, // Log to console or false (no logging of database queries)
     omitNull: true,
