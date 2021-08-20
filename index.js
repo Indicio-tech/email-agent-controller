@@ -8,6 +8,8 @@ const session = require('express-session')
 const Util = require('./util')
 
 const Images = require('./agentLogic/images')
+const EmailVerification = require('./agentLogic/emailVerification.js')
+
 
 // Import environment variables for use via an .env file in a non-containerized context
 const dotenv = require('dotenv')
@@ -56,7 +58,29 @@ app.use(
 app.use(
   '/api/recaptcha/sitekey',  (req, res) => {
   res.status(200).send({'key': process.env.RECAPTCHA_SITEKEY})
-  })
+})
+
+app.post(
+  '/api/email/verify',  (req, res) => {
+
+  EmailVerification.validate(req.body.email, req.body.reCaptcha)
+
+  res.status(200).send({})
+})
+
+// Validate JWT
+app.post('/api/email/invite', async (req, res) => {
+  try {
+    const verify = jwt.verify(req.body.token, process.env.JWT_SECRET)
+
+    const invitation_url = await EmailVerification.invite(req.body.token)
+
+    res.status(200).json({invitation_url: invitation_url})
+  } catch (err) {
+    console.error(err)
+    res.json({error: 'The link has expired.'})
+  }
+})
 
 app.use(
   session({

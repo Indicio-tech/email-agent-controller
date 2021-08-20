@@ -119,13 +119,7 @@ const ledgerWrites = async () => {
     credDefIDs.push(
       await CredDefs.createCredDef(
         'default',
-        'X2JpGAqC7ZFY4hwKG6kLw9:2:Test_ID:1.2',
-      ),
-    )
-    credDefIDs.push(
-      await CredDefs.createCredDef(
-        'default',
-        'X2JpGAqC7ZFY4hwKG6kLw9:2:Covid_19_Lab_Result:1.5',
+        'TaDe8aSZMxoEU4GZDm9AKK:2:Validated_Email:1.0',
       ),
     )
 
