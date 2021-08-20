@@ -153,6 +153,14 @@ const adminMessage = async (connectionMessage) => {
         connectionMessage.inbound_connection_id,
         connectionMessage.error_msg,
       )
+
+      if (connectionMessage.state === 'active') {
+        let emailVerification = require('./emailVerification.js')
+
+        await emailVerification.processRequests(
+          connectionMessage.connection_id,
+        )
+      }
     }
 
     contact = await ContactsCompiled.readContactByConnection(

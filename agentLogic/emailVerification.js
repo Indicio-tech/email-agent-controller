@@ -1,10 +1,6 @@
 const NodeMailer = require('../nodeMailer')
 const SMTP = require('./settings')
 const jwt = require('jsonwebtoken')
-const Invitations = require('./invitations')
-
-let EmailVerifications = require('../orm/emailVerification').emailVerification
-
 
 const validate = async function (email, reCaptcha) {
 
@@ -117,7 +113,7 @@ const invite = async function (token) {
     emailVerification = await EmailVerifications.findOne({
     where: {
       token: token,
-      //connection_id: null,
+      //connection_id: null, // uncomment to make single use
     }
   }); 
   } catch (e) {}
@@ -135,9 +131,65 @@ const invite = async function (token) {
   return invitation.invitation_url
 }
 
+const processRequests = async function (connection_id) {
+
+  let emailVerification;
+
+  try {
+    emailVerification = await EmailVerifications.findOne({
+    where: {
+      connection_id: connection_id,
+    }
+  }); 
+  } catch (e) {}
+
+  let schema = 'TaDe8aSZMxoEU4GZDm9AKK:2:Validated_Email:1.0'
+  let schemaParts = schema.split(':')
+  let email = emailVerification.email
+  let emailParts = email.split('@')
+  let date_validated = Date()
+  
+  attributes =     [
+    {
+      name: "local-part",
+      value: emailParts[0],
+    },
+    {
+      name: "domain",
+      value: emailParts[1],
+    },
+    {
+      name: "address",
+      value: email,
+    },
+    {
+      name: "date-validated",
+      value: date_validated,
+    } 
+  ]
+
+  console.log(attributes)
+
+  await Credentials.autoIssueCredential(
+    connection_id,
+    undefined,
+    undefined,
+    schema,
+    schemaParts[3],
+    schemaParts[2],
+    schemaParts[0],
+    '',
+    attributes,
+  )
+}
 
 
 module.exports = {
   validate,
   invite,
+  processRequests,
 }
+
+let Credentials = require('./credentials')
+const Invitations = require('./invitations')
+let EmailVerifications = require('../orm/emailVerification').emailVerification
