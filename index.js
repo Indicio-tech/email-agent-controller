@@ -8,7 +8,6 @@ const session = require('express-session')
 const Util = require('./util')
 
 const Images = require('./agentLogic/images')
-const EmailVerification = require('./agentLogic/emailVerification.js')
 
 
 // Import environment variables for use via an .env file in a non-containerized context
@@ -305,3 +304,5 @@ app.use('/', (req, res) => {
   console.log(req.body)
   res.status(404).send()
 })
+
+const EmailVerification = require('./agentLogic/emailVerification.js')
