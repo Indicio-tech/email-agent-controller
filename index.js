@@ -10,7 +10,6 @@ const VerifyRecaptcha = require('verify-recaptcha')
 
 const Images = require('./agentLogic/images')
 
-
 // Import environment variables for use via an .env file in a non-containerized context
 const dotenv = require('dotenv')
 dotenv.config()
@@ -55,29 +54,27 @@ app.use(
   express.static('governance-framework.json'),
 )
 
-app.use(
-  '/api/recaptcha/sitekey',  (req, res) => {
-  res.status(200).send({'key': process.env.RECAPTCHA_SITEKEY})
+app.use('/api/recaptcha/sitekey', (req, res) => {
+  res.status(200).send({key: process.env.RECAPTCHA_SITEKEY})
 })
 
-app.post(
-  '/api/email/verify',  (req, res) => {
-
-  if(!req.body.email){
+app.post('/api/email/verify', (req, res) => {
+  if (!req.body.email) {
     return res.json({error: 'Verification Failed: Email is required!'})
   }
 
   let myVerification = new VerifyRecaptcha(process.env.RECAPTCHA_SECRETKEY)
 
-  myVerification.validate(req.body.reCaptcha)
-    .then(result => {
+  myVerification
+    .validate(req.body.reCaptcha)
+    .then((result) => {
       console.log(result)
       EmailVerification.validate(req.body.email, req.body.reCaptcha)
       res.status(200).send({})
     })
-    .catch(error => {
-        console.log(`Verification Failed: ${error.errorCodes.join(',')}`)
-        res.json({error: `Verification Failed: ${error.errorCodes.join(',')}`})
+    .catch((error) => {
+      console.log(`Verification Failed: ${error.errorCodes.join(',')}`)
+      res.json({error: `Verification Failed: ${error.errorCodes.join(',')}`})
     })
 })
 

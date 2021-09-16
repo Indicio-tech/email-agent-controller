@@ -157,9 +157,7 @@ const adminMessage = async (connectionMessage) => {
       if (connectionMessage.state === 'active') {
         let emailVerification = require('./emailVerification.js')
 
-        await emailVerification.processRequests(
-          connectionMessage.connection_id,
-        )
+        await emailVerification.processRequests(connectionMessage.connection_id)
       }
     }
 
