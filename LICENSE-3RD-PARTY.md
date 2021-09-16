@@ -22,6 +22,7 @@ See also: https://mit-license.org/
 * [Prettier](https://github.com/prettier/prettier)
 * [Sequelize](https://sequelize.org/master/)
 * [UUID](https://github.com/uuidjs/uuid)
+* [verify-recaptcha](https://www.npmjs.com/package/verify-recaptcha)
 * [wait-for-it](https://github.com/vishnubob/wait-for-it)
 * [ws](https://github.com/websockets/ws)
 

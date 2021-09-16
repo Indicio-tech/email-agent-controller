@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const session = require('express-session')
 const Util = require('./util')
+const VerifyRecaptcha = require('verify-recaptcha')
 
 const Images = require('./agentLogic/images')
 
@@ -62,9 +63,22 @@ app.use(
 app.post(
   '/api/email/verify',  (req, res) => {
 
-  EmailVerification.validate(req.body.email, req.body.reCaptcha)
+  if(!req.body.email){
+    return res.json({error: 'Verification Failed: Email is required!'})
+  }
 
-  res.status(200).send({})
+  let myVerification = new VerifyRecaptcha(process.env.RECAPTCHA_SECRETKEY)
+
+  myVerification.validate(req.body.reCaptcha)
+    .then(result => {
+      console.log(result)
+      EmailVerification.validate(req.body.email, req.body.reCaptcha)
+      res.status(200).send({})
+    })
+    .catch(error => {
+        console.log(`Verification Failed: ${error.errorCodes.join(',')}`)
+        res.json({error: `Verification Failed: ${error.errorCodes.join(',')}`})
+    })
 })
 
 // Validate JWT
