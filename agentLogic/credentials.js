@@ -176,7 +176,7 @@ const autoIssueCredential = async (
     if (!connection) {
       console.error('Connection Not Present')
       throw new ControllerError(2, 'Connection Not Present')
-    } else if (connection.state !== 'active') {
+    } else if (connection.state !== 'response') {
       console.error('Connection Not Ready to Receive Credentials')
       throw new ControllerError(3, 'Connection Not Active')
     }
