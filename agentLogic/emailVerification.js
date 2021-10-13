@@ -3,7 +3,6 @@ const SMTP = require('./settings')
 const jwt = require('jsonwebtoken')
 
 const validate = async function (email, reCaptcha) {
-
   const token = jwt.sign({email: email}, process.env.JWT_SECRET, {
     expiresIn: '24h',
   })
@@ -106,41 +105,42 @@ const validate = async function (email, reCaptcha) {
 }
 
 const invite = async function (token) {
-
-  let emailVerification;
+  let emailVerification
 
   try {
     emailVerification = await EmailVerifications.findOne({
-    where: {
-      token: token,
-      //connection_id: null, // uncomment to make single use
-    }
-  }); 
+      where: {
+        token: token,
+        //connection_id: null, // uncomment to make single use
+      },
+    })
   } catch (e) {}
 
   let invitation = await Invitations.createSingleUseInvitation()
 
-  let result = await EmailVerifications.update( {
-      connection_id: invitation.connection_id
-    }, {
-    where: {
-      id: emailVerification.id
-    }
-  });
+  let result = await EmailVerifications.update(
+    {
+      connection_id: invitation.connection_id,
+    },
+    {
+      where: {
+        id: emailVerification.id,
+      },
+    },
+  )
 
   return invitation.invitation_url
 }
 
 const processRequests = async function (connection_id) {
-
-  let emailVerification;
+  let emailVerification
 
   try {
     emailVerification = await EmailVerifications.findOne({
-    where: {
-      connection_id: connection_id,
-    }
-  }); 
+      where: {
+        connection_id: connection_id,
+      },
+    })
   } catch (e) {}
 
   let schema = 'TaDe8aSZMxoEU4GZDm9AKK:2:Validated_Email:1.0'
@@ -148,24 +148,24 @@ const processRequests = async function (connection_id) {
   let email = emailVerification.email
   let emailParts = email.split('@')
   let date_validated = Date()
-  
-  attributes =     [
+
+  attributes = [
     {
-      name: "local-part",
+      name: 'local-part',
       value: emailParts[0],
     },
     {
-      name: "domain",
+      name: 'domain',
       value: emailParts[1],
     },
     {
-      name: "address",
+      name: 'address',
       value: email,
     },
     {
-      name: "date-validated",
+      name: 'date-validated',
       value: date_validated,
-    } 
+    },
   ]
 
   console.log(attributes)
@@ -182,7 +182,6 @@ const processRequests = async function (connection_id) {
     attributes,
   )
 }
-
 
 module.exports = {
   validate,
